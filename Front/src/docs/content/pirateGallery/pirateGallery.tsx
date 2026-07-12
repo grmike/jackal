@@ -1,7 +1,7 @@
 import cn from 'classnames';
 import { Constants } from '/app/constants';
 import Image from 'react-bootstrap/Image';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface ImageGroup {
   name?: string;
@@ -22,11 +22,74 @@ const PirateGallery = () => {
   const imageGroups: Record<string, ImageGroup> = Constants.imageGroups;
   const [expandedGroups, setExpandedGroups] = useState<ExpandedGroups>({});
 
+  // Функция для получения параметра из URL
+  const getHashParam = () => {
+    const hash = window.location.hash;
+    if (hash && hash.includes('=')) {
+      const params = new URLSearchParams(hash.substring(1));
+      return params.get('team');
+    }
+    return null;
+  };
+
+  // При монтировании компонента проверяем URL и раскрываем нужную команду
+  useEffect(() => {
+    const teamParam = getHashParam();
+    if (teamParam && imageGroups[teamParam]) {
+      setExpandedGroups(prev => ({
+        ...prev,
+        [teamParam]: true
+      }));
+
+      // Прокручиваем к раскрытой команде с небольшой задержкой
+      setTimeout(() => {
+        const element = document.getElementById(`team-${teamParam}`);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    }
+  }, []);
+
+  // Слушаем изменения хэша для динамического раскрытия
+  useEffect(() => {
+    const handleHashChange = () => {
+      const teamParam = getHashParam();
+      if (teamParam && imageGroups[teamParam]) {
+        setExpandedGroups(prev => ({
+          ...prev,
+          [teamParam]: true
+        }));
+
+        setTimeout(() => {
+          const element = document.getElementById(`team-${teamParam}`);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 100);
+      }
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
   const toggleGroup = (groupId: string) => {
     setExpandedGroups(prev => ({
       ...prev,
       [groupId]: !prev[groupId]
     }));
+
+    // Обновляем URL при ручном раскрытии/скрытии
+    const newExpanded = !expandedGroups[groupId];
+    if (newExpanded) {
+      window.location.hash = `team=${groupId}`;
+    } else {
+      // Если скрываем текущую команду, убираем параметр
+      if (getHashParam() === groupId) {
+        window.history.pushState('', document.title, window.location.pathname);
+      }
+    }
   };
 
   return (
@@ -35,7 +98,7 @@ const PirateGallery = () => {
         const isExpanded = expandedGroups[groupId] || false;
 
         return (
-          <div key={groupId} style={styles.groupContainer}>
+          <div key={groupId} id={`team-${groupId}`} style={styles.groupContainer}>
             {/* Заголовок команды с логотипом слева - кликабельно */}
             <div 
               style={styles.teamHeader} 
