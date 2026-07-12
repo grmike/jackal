@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, Navigate } from 'react-router-dom';
 
 import GameDocuments from '../../../docs/content';
 import useClientMethod from '../../hubs/useClientMethod';
@@ -74,7 +74,8 @@ const Layout = () => {
                 <Route path="/newpublic" element={<NetGameCreate />}></Route>
                 <Route path="/login" element={<Login />}></Route>
                 <Route path="/netgame" element={<GameList />}></Route>
-                <Route path="/docs" element={<GameDocuments />}></Route>
+                <Route path="/docs/:tabId" element={<GameDocuments />} />
+                <Route path="/docs" element={<Navigate to="/docs/rules" replace />} />
                 <Route path="/" element={<Playground />}></Route>
             </Routes>
             {auth.isAuthorised === false && <Logon />}
