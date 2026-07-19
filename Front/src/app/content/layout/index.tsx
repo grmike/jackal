@@ -1,11 +1,10 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Route, Routes, Navigate } from 'react-router-dom';
+import { Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom';
 
 import GameDocuments from '../../../docs/content';
 import useClientMethod from '../../hubs/useClientMethod';
 import useHub from '../../hubs/useHub';
-import Logon from './logon';
 import MessageNotifier from './messNotifier';
 import Newgame from './newgame';
 import Quickstart from './quickstart';
@@ -21,6 +20,19 @@ import { initMySettings } from '/game/redux/gameSlice';
 import { BrowserStorage } from '/game/types';
 import NetGameCreate from '/lobby/content/gameCreate';
 import GameList from '/lobby/content/gameList';
+
+const ProtectedRoute = () => {
+    const auth = useSelector(getAuth);
+    const location = useLocation();
+
+    // Redirect to login, storing the original target location in state
+    if (auth.isAuthorised === false) {
+        return <Navigate to="/login" state={{ from: location }} replace />;
+    }
+
+    // If logged in, render the child routes
+    return <Outlet />;
+};
 
 const Layout = () => {
     const dispatch = useDispatch();
@@ -69,16 +81,20 @@ const Layout = () => {
     return (
         <>
             <Routes>
-                <Route path="/quickstart" element={<Quickstart />}></Route>
-                <Route path="/newgame" element={<Newgame />}></Route>
-                <Route path="/newpublic" element={<NetGameCreate />}></Route>
-                <Route path="/login" element={<Login />}></Route>
-                <Route path="/netgame" element={<GameList />}></Route>
+                {/* Public Routes */}
                 <Route path="/docs/:tabId" element={<GameDocuments />} />
                 <Route path="/docs" element={<Navigate to="/docs/rules" replace />} />
-                <Route path="/" element={<Playground />}></Route>
+                <Route path="/login" element={<Login />}></Route>
+
+                {/* Protected Routes Wrapper */}
+                <Route element={<ProtectedRoute />}>
+                    <Route path="/quickstart" element={<Quickstart />}></Route>
+                    <Route path="/newgame" element={<Newgame />}></Route>
+                    <Route path="/newpublic" element={<NetGameCreate />}></Route>
+                    <Route path="/netgame" element={<GameList />}></Route>
+                    <Route path="/" element={<Playground />}></Route>
+                </Route>
             </Routes>
-            {auth.isAuthorised === false && <Logon />}
             <MessageNotifier />
         </>
     );
