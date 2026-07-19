@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { Col, Form, Row } from 'react-bootstrap';
+import { useDispatch } from 'react-redux';
 
 import Cell from './components/cell';
+import MapPirate from './components/mapPirate';
 import { Constants, ImagesPacksIds } from '/app/constants';
-import { PiratePhotoMemoized } from '/game/content/components/mapPirates/piratePhotoMemoized';
-import girlsMap from '/game/logic/components/girlsMap';
+import { initPiratePosition, setPiratePosition } from '/docs/redux/docsSlice';
 
 const TileTypes = [
     'airplane',
@@ -58,6 +59,9 @@ const MapRenderer = () => {
     const [mapSize, setMapSize] = useState<number>(9);
     const [imagesPackName, setImagesPackName] = useState<ImagesPacksIds>(ImagesPacksIds.classic);
 
+    const dispatch = useDispatch();
+    dispatch(initPiratePosition(mapSize));
+
     const switchImagesPackName = (event: { target: { value: string } }) => {
         const val = Object.values(ImagesPacksIds).includes(event.target.value as ImagesPacksIds)
             ? (event.target.value as ImagesPacksIds)
@@ -66,24 +70,7 @@ const MapRenderer = () => {
     };
 
     const cellSize = 70;
-    const pirateSize = 15;
     const mapWidth = (cellSize + 1) * (mapSize + 2) - 1;
-
-    const pirate: GamePirate = {
-        id: '100',
-        teamId: 0,
-        position: {
-            level: 0,
-            x: 2,
-            y: 0,
-        },
-        photo: '',
-        photoId: 0,
-        type: Constants.pirateTypes.Usual,
-    };
-
-    girlsMap.AddPosition(pirate, 1);
-
     const tiles = [...TileTypes];
 
     const customTilesConfig: { [index: string]: number } = Constants.imagesPackTiles[imagesPackName];
@@ -165,34 +152,33 @@ const MapRenderer = () => {
                                         <div className="map-cell" key={`map-cell-${cIndex}`}>
                                             <Cell
                                                 col={cIndex}
-                                                row={rIndex}
+                                                row={mapSize - rIndex + 1}
                                                 cellSize={cellSize}
                                                 tileType={calcTileType(rIndex, cIndex, mapSize)}
                                                 imagesPackName={imagesPackName}
+                                                onClick={() => {
+                                                    dispatch(
+                                                        setPiratePosition({
+                                                            teamId: 0,
+                                                            id: '100',
+                                                            position: {
+                                                                level: 0,
+                                                                x: cIndex,
+                                                                y: mapSize - rIndex + 1,
+                                                            },
+                                                        }),
+                                                    );
+                                                }}
                                             />
                                         </div>
                                     ))}
                             </div>
                         ))}
                 </div>
-                <div
-                    className="level"
-                    style={{
-                        top: girlsMap.CalcTopOffset(pirate, mapSize, cellSize, pirateSize),
-                        left: girlsMap.CalcLeftOffset(pirate, cellSize, pirateSize),
-                        zIndex: 10,
-                        pointerEvents: 'auto',
-                    }}
-                >
-                    <PiratePhotoMemoized
-                        pirate={pirate}
-                        pirateSize={pirateSize}
-                        isCurrentPlayerGirl
-                        onTeamPirateClick={() => {}}
-                    />
-                </div>
 
-                {/* <MapPirates mapSize={mapSize} cellSize={cellSize} chessBarSize={chessBarSize} /> */}
+                <div style={{ position: 'relative' }}>
+                    <MapPirate mapSize={mapSize} cellSize={cellSize} />
+                </div>
             </Col>
         </Row>
     );
