@@ -1,5 +1,5 @@
-import CoinPhoto from './coinPhoto';
-import FeaturePhoto from './featurePhoto';
+import CoinPhoto from './components/coinPhoto';
+import FeaturePhoto from './components/featurePhoto';
 import { hasFreeMoney } from '/game/logic/gameLogic';
 import { GameLevel } from '/game/types/gameContent';
 

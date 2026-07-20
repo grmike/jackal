@@ -43,31 +43,22 @@ export const docsSlice = createSlice({
             girlsMap.RemovePosition(state.pirate);
             state.pirate.position = action.payload.position;
             girlsMap.AddPosition(state.pirate, 1);
-            state.availableMoves = [];
-            state.availableMoves.push({
+            const availMoves = [
+                [-1, -1],
+                [-1, 0],
+                [-1, 1],
+                [0, 1],
+                [1, 1],
+                [1, 0],
+                [1, -1],
+                [0, -1],
+            ];
+            state.availableMoves = availMoves.map((pos) => ({
                 pirateIds: [],
                 level: 0,
-                x: state.pirate.position.x + 1,
-                y: state.pirate.position.y,
-            });
-            state.availableMoves.push({
-                pirateIds: [],
-                level: 0,
-                x: state.pirate.position.x - 1,
-                y: state.pirate.position.y,
-            });
-            state.availableMoves.push({
-                pirateIds: [],
-                level: 0,
-                x: state.pirate.position.x,
-                y: state.pirate.position.y + 1,
-            });
-            state.availableMoves.push({
-                pirateIds: [],
-                level: 0,
-                x: state.pirate.position.x,
-                y: state.pirate.position.y - 1,
-            });
+                x: state.pirate.position.x + pos[0],
+                y: state.pirate.position.y + pos[1],
+            }));
         },
     },
     selectors: {
