@@ -20,6 +20,7 @@ export const docsSlice = createSlice({
             type: Constants.pirateTypes.Usual,
         },
         availableMoves: [],
+        stepOpacity: 0.5,
     } satisfies DocsState as DocsState,
     reducers: {
         setPiratePosition: (state, action: PayloadAction<GamePiratePosition>) => {
@@ -41,16 +42,20 @@ export const docsSlice = createSlice({
                 y: state.pirate.position.y + pos[1],
             }));
         },
+        setStepOpacity: (state, action: PayloadAction<number>) => {
+            state.stepOpacity = action.payload;
+        },
     },
     selectors: {
         getPirate: (state): GamePirate => state.pirate,
+        getStepOpacity: (state): number => state.stepOpacity,
         hasAvailableMove: (state, x: number, y: number): boolean =>
             state.availableMoves.some((it) => it.x == x && it.y == y),
     },
 });
 
-export const { setPiratePosition } = docsSlice.actions;
+export const { setPiratePosition, setStepOpacity } = docsSlice.actions;
 
-export const { getPirate, hasAvailableMove } = docsSlice.selectors;
+export const { getPirate, hasAvailableMove, getStepOpacity } = docsSlice.selectors;
 
 export default docsSlice.reducer;

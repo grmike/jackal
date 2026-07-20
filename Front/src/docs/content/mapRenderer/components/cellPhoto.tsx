@@ -1,7 +1,7 @@
 import cn from 'classnames';
 import { useSelector } from 'react-redux';
 
-import { hasAvailableMove } from '/docs/redux/docsSlice';
+import { getStepOpacity, hasAvailableMove } from '/docs/redux/docsSlice';
 import { DocsState } from '/docs/types/types';
 import TurnIcon from '/game/content/components/map/cell/turnIcon';
 import { FieldState } from '/game/types';
@@ -16,6 +16,7 @@ interface CellPhotoProps {
 
 const CellPhoto = ({ row, col, cellSize, field, onClick }: CellPhotoProps) => {
     const hasMove = useSelector<{ docs: DocsState }, boolean>((state) => hasAvailableMove(state, col, row));
+    const opacity = useSelector(getStepOpacity);
 
     return (
         <>
@@ -33,7 +34,7 @@ const CellPhoto = ({ row, col, cellSize, field, onClick }: CellPhotoProps) => {
                     height: cellSize,
                     backgroundImage: field.image ? `url(${field.image})` : '',
                     transform: field.rotate && field.rotate > 0 ? `rotate(${field.rotate * 90}deg)` : 'none',
-                    opacity: hasMove ? '0.5' : '1',
+                    opacity: hasMove ? opacity : '1',
                     cursor: hasMove ? 'pointer' : 'default',
                 }}
                 onClick={onClick}

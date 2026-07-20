@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { Col, Form, Row } from 'react-bootstrap';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Cell from './components/cell';
 import MapPirate from './components/mapPirate';
 import { Constants, ImagesPacksIds } from '/app/constants';
-import { setPiratePosition } from '/docs/redux/docsSlice';
+import { getStepOpacity, setPiratePosition, setStepOpacity } from '/docs/redux/docsSlice';
 
 const TileTypes = [
     'airplane',
@@ -54,6 +54,26 @@ const TileTypes = [
 ];
 
 //const BorderTileTypes = ['ship_1', 'ship_2', 'ship_3', 'ship_4', 'water'];
+
+const OpacityForm = () => {
+    const opacity = useSelector(getStepOpacity);
+    const dispatch = useDispatch();
+
+    return (
+        <div>
+            <Form.Label>Прозрачность хода: {opacity}%</Form.Label>
+            <Form.Range
+                value={opacity}
+                min={0}
+                max={1}
+                step={0.1}
+                name="opacity"
+                onChange={(e) => dispatch(setStepOpacity(Number(e.target.value)))}
+                className="custom-slider"
+            />
+        </div>
+    );
+};
 
 const MapRenderer = () => {
     const [mapSize, setMapSize] = useState<number>(9);
@@ -131,6 +151,9 @@ const MapRenderer = () => {
                             ))}
                         </Form.Select>
                     </Form.Group>
+                    <div className="mt-3">
+                        <OpacityForm />
+                    </div>
                 </Form>
             </Col>
             <Col xs={8} className="justify-content-center">
