@@ -2,7 +2,6 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 import { DocsState } from '../types/types';
 import { Constants, ImageGroupsIds } from '/app/constants';
-import girlsMap from '/game/logic/components/girlsMap';
 
 export const docsSlice = createSlice({
     name: 'docs',
@@ -21,28 +20,10 @@ export const docsSlice = createSlice({
             type: Constants.pirateTypes.Usual,
         },
         availableMoves: [],
-        fields: [[]],
     } satisfies DocsState as DocsState,
     reducers: {
-        initPiratePosition: (state, action: PayloadAction<number>) => {
-            girlsMap.Map = {};
-            girlsMap.AddPosition(state.pirate, 1);
-            const map = [];
-            let j = 0;
-            for (let i = 0; i < action.payload; i++) {
-                const row: boolean[] = [];
-                for (let col = 0; col < action.payload; col++) {
-                    row.push(false);
-                    j++;
-                }
-                map.push(row);
-            }
-            state.fields = map;
-        },
         setPiratePosition: (state, action: PayloadAction<GamePiratePosition>) => {
-            girlsMap.RemovePosition(state.pirate);
             state.pirate.position = action.payload.position;
-            girlsMap.AddPosition(state.pirate, 1);
             const availMoves = [
                 [-1, -1],
                 [-1, 0],
@@ -68,7 +49,7 @@ export const docsSlice = createSlice({
     },
 });
 
-export const { initPiratePosition, setPiratePosition } = docsSlice.actions;
+export const { setPiratePosition } = docsSlice.actions;
 
 export const { getPirate, hasAvailableMove } = docsSlice.selectors;
 

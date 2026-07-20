@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import Cell from './components/cell';
 import MapPirate from './components/mapPirate';
 import { Constants, ImagesPacksIds } from '/app/constants';
-import { initPiratePosition, setPiratePosition } from '/docs/redux/docsSlice';
+import { setPiratePosition } from '/docs/redux/docsSlice';
 
 const TileTypes = [
     'airplane',
@@ -60,7 +60,6 @@ const MapRenderer = () => {
     const [imagesPackName, setImagesPackName] = useState<ImagesPacksIds>(ImagesPacksIds.classic);
 
     const dispatch = useDispatch();
-    dispatch(initPiratePosition(mapSize));
 
     const switchImagesPackName = (event: { target: { value: string } }) => {
         const val = Object.values(ImagesPacksIds).includes(event.target.value as ImagesPacksIds)

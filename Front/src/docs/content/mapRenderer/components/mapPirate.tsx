@@ -1,8 +1,8 @@
 import { useSelector } from 'react-redux';
 
+import docsPirateMap from '/docs/logic/docsPirateMap';
 import { getPirate } from '/docs/redux/docsSlice';
 import { PiratePhotoMemoized } from '/game/content/components/mapPirates/piratePhotoMemoized';
-import girlsMap from '/game/logic/components/girlsMap';
 
 interface MapPirateProps {
     mapSize: number;
@@ -18,8 +18,8 @@ const MapPirate = ({ mapSize, cellSize }: MapPirateProps) => {
         <div
             className="level"
             style={{
-                top: girlsMap.CalcTopOffset(pirate, mapSize, cellSize, pirateSize) - mapSize * (cellSize + 1),
-                left: girlsMap.CalcLeftOffset(pirate, cellSize, pirateSize),
+                top: docsPirateMap.CalcTopOffset(pirate, mapSize, cellSize) - mapSize * (cellSize + 1),
+                left: docsPirateMap.CalcLeftOffset(pirate, cellSize),
                 zIndex: 10,
                 pointerEvents: 'auto',
             }}
