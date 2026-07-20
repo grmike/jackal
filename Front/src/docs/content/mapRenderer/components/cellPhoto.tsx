@@ -1,0 +1,37 @@
+import cn from 'classnames';
+import { useSelector } from 'react-redux';
+
+import { hasAvailableMove } from '/docs/redux/docsSlice';
+import { DocsState } from '/docs/types/types';
+import { FieldState } from '/game/types';
+
+interface CellPhotoProps {
+    row: number;
+    col: number;
+    cellSize: number;
+    field: FieldState;
+    onClick: () => void;
+}
+
+const CellPhoto = ({ row, col, cellSize, field, onClick }: CellPhotoProps) => {
+    const hasMove = useSelector<{ docs: DocsState }, boolean>((state) => hasAvailableMove(state, col, row));
+
+    return (
+        <div
+            key="main_cell"
+            id={`cell_${col}_${row}`}
+            className={cn('cell', { 'cell-dark': field.dark === true }, { 'cell-active': field.highlight === true })}
+            style={{
+                width: cellSize,
+                height: cellSize,
+                backgroundImage: field.image ? `url(${field.image})` : '',
+                transform: field.rotate && field.rotate > 0 ? `rotate(${field.rotate * 90}deg)` : 'none',
+                opacity: hasMove ? '0.5' : '1',
+                cursor: hasMove ? 'pointer' : 'default',
+            }}
+            onClick={onClick}
+        ></div>
+    );
+};
+
+export default CellPhoto;

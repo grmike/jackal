@@ -1,5 +1,4 @@
-import cn from 'classnames';
-
+import CellPhoto from './cellPhoto';
 import { Constants, ImagesPacksIds } from '/app/constants';
 import { getVersionsImage } from '/app/global';
 import { FieldState } from '/game/types';
@@ -10,11 +9,10 @@ interface CellProps {
     cellSize: number;
     tileType: string;
     imagesPackName: ImagesPacksIds;
+    onClick: () => void;
 }
 
-const Cell = ({ row, col, cellSize, tileType, imagesPackName }: CellProps) => {
-    const hasMove = false;
-
+const Cell = ({ row, col, onClick, cellSize, tileType, imagesPackName }: CellProps) => {
     const customTilesConfig: { [index: string]: number } = Constants.imagesPackTiles[imagesPackName];
     const field: FieldState = {
         tileType,
@@ -35,22 +33,7 @@ const Cell = ({ row, col, cellSize, tileType, imagesPackName }: CellProps) => {
         availableMoves: [],
     };
 
-    return (
-        <div
-            key="main_cell"
-            id={`cell_${col}_${row}`}
-            className={cn('cell', { 'cell-dark': field.dark === true }, { 'cell-active': field.highlight === true })}
-            style={{
-                width: cellSize,
-                height: cellSize,
-                backgroundImage: field.image ? `url(${field.image})` : '',
-                transform: field.rotate && field.rotate > 0 ? `rotate(${field.rotate * 90}deg)` : 'none',
-                opacity: hasMove ? '0.5' : '1',
-                cursor: hasMove ? 'pointer' : 'default',
-            }}
-            // onClick={hasMove ? onClick : undefined}
-        ></div>
-    );
+    return <CellPhoto row={row} col={col} cellSize={cellSize} field={field} onClick={onClick} />;
 };
 
 export default Cell;
