@@ -1,21 +1,20 @@
 import cn from 'classnames';
-import { ReactNode, RefObject } from 'react';
-import { FaArrowAltCircleDown, FaArrowAltCircleUp, FaRegEye } from 'react-icons/fa';
-import { GiFootprint } from 'react-icons/gi';
+import { RefObject } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { TooltipRefProps } from 'react-tooltip';
 
-import { TooltipTypes } from '../../../constants';
-import gameHub from '../../../hub/gameHub';
-import { CalcTooltipType } from '../../../logic/components/calcTooltipType';
-import { getGameField, getGameSettings, getGameStatistics } from '../../../redux/gameSlice';
-import { AvailableMove, FieldState, GameState } from '../../../types';
 import './cell.less';
 import Level from './level';
 import LevelZero from './levelZero';
+import TurnIcon from './turnIcon';
 import store from '/app/store';
 import { showMessage } from '/common/redux/commonSlice';
+import { TooltipTypes } from '/game/constants';
+import gameHub from '/game/hub/gameHub';
+import { CalcTooltipType } from '/game/logic/components/calcTooltipType';
 import { hasFreeMoney } from '/game/logic/gameLogic';
+import { getGameField, getGameSettings, getGameStatistics } from '/game/redux/gameSlice';
+import { AvailableMove, FieldState, GameState } from '/game/types';
 
 interface CellAvailableMove extends AvailableMove {
     img?: string;
@@ -28,18 +27,7 @@ interface CellProps {
     tooltipRef: RefObject<TooltipRefProps>;
 }
 
-const TurnIcon = ({ moves }: { moves: AvailableMove[] }): ReactNode => {
-    if (moves.length > 0) {
-        if (moves[0].isQuakeBegin)
-            return <FaArrowAltCircleUp size={20} style={{ position: 'absolute', color: 'gray' }} />;
-        if (moves[0].isQuakeEnd)
-            return <FaArrowAltCircleDown size={20} style={{ position: 'absolute', color: 'gray' }} />;
-        if (moves[0].isLighthouse) return <FaRegEye size={20} style={{ position: 'absolute', color: 'dimGray' }} />;
-    }
-    return <GiFootprint size={20} style={{ position: 'absolute', color: 'dimGray' }} />;
-};
-
-function Cell({ row, col, tooltipRef }: CellProps) {
+const Cell = ({ row, col, tooltipRef }: CellProps) => {
     const field = useSelector<{ game: GameState }, FieldState>((state) => getGameField(state, row, col));
     const gameStat = useSelector(getGameStatistics);
     const { gameId, cellSize, pirateSize } = useSelector(getGameSettings);
@@ -199,6 +187,6 @@ function Cell({ row, col, tooltipRef }: CellProps) {
                     ))}
         </>
     );
-}
+};
 
 export default Cell;

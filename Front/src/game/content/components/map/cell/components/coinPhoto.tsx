@@ -1,6 +1,6 @@
 import { useDispatch } from 'react-redux';
 
-import { takeOrPutCoin } from '../../../redux/gameSlice';
+import { takeOrPutCoin } from '/game/redux/gameSlice';
 import { GameLevel } from '/game/types/gameContent';
 
 interface CoinPhotoCalcs {
